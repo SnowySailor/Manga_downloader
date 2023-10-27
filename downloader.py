@@ -83,6 +83,8 @@ class Downloader:
     def get_driver(self):
         option = uc.ChromeOptions()
         option.set_capability('unhandledPromptBehavior', 'accept')
+        option.add_argument('--no-sandbox')
+        option.add_argument('--disable-dev-shm-usage')
         option.add_argument('--high-dpi-support=1')
         option.add_argument('--device-scale-factor=1')
         option.add_argument('--force-device-scale-factor=1')
@@ -124,11 +126,11 @@ class Downloader:
         driver.get(self.actions_class.login_url)
         driver.delete_all_cookies()
         add_cookies(driver, self.cookies)
+        driver.get(self.actions_class.login_url)
         logging.info('Login finished...')
 
     def prepare_download(self, this_image_dir, this_manga_url):
-        if not os.path.isdir(this_image_dir):
-            os.mkdir(this_image_dir)
+        os.makedirs(this_image_dir, exist_ok=True)
         logging.info('Loading Book page...')
         driver = self.driver
         driver.set_window_size(self.res[0], self.res[1])
